@@ -7,8 +7,8 @@ import math
 
 
 def deg2rad(deg):
-    return deg*math.pi/180
-    
+    return deg*math.pi/180 
+
 rospy.init_node('lidar_publisher')
 
 scan_pub = rospy.Publisher('scan', LaserScan, queue_size=50)
