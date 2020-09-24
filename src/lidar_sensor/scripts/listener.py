@@ -37,7 +37,8 @@
 ## to the 'chatter' topic
 
 # auth: Le Van Son
-#mail: vanson1243@gmail.com
+# mail: vanson1243@gmail.com
+# test git
 
 import rospy
 from std_msgs.msg import String
