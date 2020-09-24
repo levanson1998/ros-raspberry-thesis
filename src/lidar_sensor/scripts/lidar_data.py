@@ -14,7 +14,7 @@ laser_frequency = 10
 
 count = 0
 r = rospy.Rate(5.0)
-while not rospy.is_shutdown()
+while not rospy.is_shutdown():
     current_time = rospy.Time.now()
 
     scan = LaserScan()
