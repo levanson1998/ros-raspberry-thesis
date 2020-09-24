@@ -4,6 +4,7 @@ import rospy
 from std_msgs.msg import String
 from sensor_msgs.msg import LaserScan
 import math
+from rplidar import RPLidar
 
 
 def deg2rad(deg):
