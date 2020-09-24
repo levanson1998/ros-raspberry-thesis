@@ -1,0 +1,2 @@
+lidar_sensor
+-DCATKIN_DEVEL_PREFIX=/home/ubuntu/mbrb_ws/devel -DCMAKE_INSTALL_PREFIX=/home/ubuntu/mbrb_ws/install -G Unix Makefiles
