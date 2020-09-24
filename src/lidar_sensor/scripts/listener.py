@@ -36,6 +36,9 @@
 ## Simple talker demo that listens to std_msgs/Strings published 
 ## to the 'chatter' topic
 
+# auth: Le Van Son
+#mail: vanson1243@gmail.com
+
 import rospy
 from std_msgs.msg import String
 
