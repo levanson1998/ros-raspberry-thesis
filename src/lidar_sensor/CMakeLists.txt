@@ -109,7 +109,7 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
-catkin_install_python(PROGRAMS scripts/talker.py scripts/listener.py
+catkin_install_python(PROGRAMS scripts/talker.py scripts/listener.py script/lidar_sensor.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
