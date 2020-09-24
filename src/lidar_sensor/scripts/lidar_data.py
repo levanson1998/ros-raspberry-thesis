@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
+from std_msgs.msg import String
 from sensor_msgs.msg import LaserScan
 import math
 
@@ -32,7 +33,7 @@ while not rospy.is_shutdown():
     for i in range(0, num_readings):
         scan.ranges.append(1.0 * count)  # fake data
         scan.intensities.append(1)  # fake data
-
+    rospy.loginfor(scan)
     scan_pub.publish(scan)
     count += 1
     r.sleep()
