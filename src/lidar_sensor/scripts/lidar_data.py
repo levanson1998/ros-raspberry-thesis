@@ -5,6 +5,10 @@ from std_msgs.msg import String
 from sensor_msgs.msg import LaserScan
 import math
 
+
+def deg2rad(deg):
+    return deg*math.pi/180
+    
 rospy.init_node('lidar_publisher')
 
 scan_pub = rospy.Publisher('scan', LaserScan, queue_size=50)
@@ -38,5 +42,3 @@ while not rospy.is_shutdown():
     count += 1
     r.sleep()
 
-def deg2rad(deg):
-    return deg*math.pi/180
