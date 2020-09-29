@@ -8,7 +8,7 @@ import math
 
 
 def deg2rad(deg):
-    return deg*math.pi/180 
+    return deg*math.pi/180
 
 rospy.init_node('lidar_publisher')
 
@@ -22,8 +22,8 @@ r = rospy.Rate(5.0)
 
 scan = LaserScan()
 
-scan.serial_port("/dev/ttyUSB0")
-scan.serial_baudrate(115200)
+scan.serial_parity("/dev/ttyUSB0")
+scan.baud_rate(115200)
 
 scan.header.stamp = current_time
 scan.header.frame_id = 'laser_frame'
@@ -48,4 +48,3 @@ while not rospy.is_shutdown():
     scan_pub.publish(scan.ranges)
     # count += 1
     r.sleep()
-
