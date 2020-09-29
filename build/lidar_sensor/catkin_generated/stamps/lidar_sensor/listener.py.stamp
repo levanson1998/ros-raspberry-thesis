@@ -36,13 +36,19 @@
 ## Simple talker demo that listens to std_msgs/Strings published 
 ## to the 'chatter' topic
 
+# auth: Le Van Son
+# mail: vanson1243@gmail.com
+# test git
+# test 1
+
 import rospy
 from std_msgs.msg import String
+from sensor_msgs.msg import LaserScan
 
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + 'I heard %s', data.data)
 
-def listener():
+def listener(): 
 
     # In ROS, nodes are uniquely named. If two nodes with the same
     # name are launched, the previous one is kicked off. The

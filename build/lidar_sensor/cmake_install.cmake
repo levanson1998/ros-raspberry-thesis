@@ -55,3 +55,7 @@ if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspeci
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/lidar_sensor" TYPE PROGRAM FILES "/home/ubuntu/mbrb_ws/build/lidar_sensor/catkin_generated/installspace/listener.py")
 endif()
 
+if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/lidar_sensor" TYPE PROGRAM FILES "/home/ubuntu/mbrb_ws/build/lidar_sensor/catkin_generated/installspace/lidar_data.py")
+endif()
+
