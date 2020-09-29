@@ -37,9 +37,19 @@
 
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
+<<<<<<< HEAD
 #include "std_msgs/Float32.h"
 #include "std_msgs/MultiArrayDimension.h"
 #include <std_msgs/Float32MultiArray.h>
+=======
+<<<<<<< HEAD
+#include "std_msgs/Float32.h"
+#include "std_msgs/MultiArrayDimension.h"
+#include <std_msgs/Float32MultiArray.h>
+=======
+#include "std_msgs/String.h"
+>>>>>>> a845ca4747297c8b8c5274ef09f8427d6d9d6a20
+>>>>>>> a467cff34159e4401d1d7c4c690b3bcd914df5b0
 
 #define RAD2DEG(x) ((x)*180./M_PI)
 
@@ -51,7 +61,17 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan)
   
     for(int i = 0; i < count; i++) {
         float degree = RAD2DEG(scan->angle_min + scan->angle_increment * i);
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+
+=======
+        ss << ("[%f, %f]", degree, scan->ranges[i]);
+        msg.data = ss.str();
+        chatter_pub.publish(msg);
+>>>>>>> a845ca4747297c8b8c5274ef09f8427d6d9d6a20
+>>>>>>> a467cff34159e4401d1d7c4c690b3bcd914df5b0
         ROS_INFO(": [%f, %f]", degree, scan->ranges[i]);
     }
 }
@@ -60,6 +80,13 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "rplidar_node_client");
     ros::NodeHandle n;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+
+>>>>>>> a845ca4747297c8b8c5274ef09f8427d6d9d6a20
+>>>>>>> a467cff34159e4401d1d7c4c690b3bcd914df5b0
     
     ros::Subscriber sub = n.subscribe<sensor_msgs::LaserScan>("/scan", 1000, scanCallback);
 

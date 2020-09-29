@@ -5,7 +5,15 @@
  -->
 <launch>
   <include file="$(find rplidar_ros)/launch/rplidar.launch" />
+<<<<<<< HEAD
+
 <!--
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rplidar_ros)/rviz/rplidar.rviz" />
   -->
+  
+=======
+<!--
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rplidar_ros)/rviz/rplidar.rviz" />
+  -->
+>>>>>>> a845ca4747297c8b8c5274ef09f8427d6d9d6a20
 </launch>
