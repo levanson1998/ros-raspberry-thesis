@@ -59,8 +59,11 @@ rplidar_ros/CMakeFiles/rplidarNodeClient.dir/src/client.cpp.o: /opt/ros/kinetic/
 rplidar_ros/CMakeFiles/rplidarNodeClient.dir/src/client.cpp.o: /opt/ros/kinetic/include/ros/wall_timer_options.h
 rplidar_ros/CMakeFiles/rplidarNodeClient.dir/src/client.cpp.o: /opt/ros/kinetic/include/rosconsole/macros_generated.h
 rplidar_ros/CMakeFiles/rplidarNodeClient.dir/src/client.cpp.o: /opt/ros/kinetic/include/sensor_msgs/LaserScan.h
+rplidar_ros/CMakeFiles/rplidarNodeClient.dir/src/client.cpp.o: /opt/ros/kinetic/include/std_msgs/Float32.h
+rplidar_ros/CMakeFiles/rplidarNodeClient.dir/src/client.cpp.o: /opt/ros/kinetic/include/std_msgs/Float32MultiArray.h
 rplidar_ros/CMakeFiles/rplidarNodeClient.dir/src/client.cpp.o: /opt/ros/kinetic/include/std_msgs/Header.h
-rplidar_ros/CMakeFiles/rplidarNodeClient.dir/src/client.cpp.o: /opt/ros/kinetic/include/std_msgs/String.h
+rplidar_ros/CMakeFiles/rplidarNodeClient.dir/src/client.cpp.o: /opt/ros/kinetic/include/std_msgs/MultiArrayDimension.h
+rplidar_ros/CMakeFiles/rplidarNodeClient.dir/src/client.cpp.o: /opt/ros/kinetic/include/std_msgs/MultiArrayLayout.h
 rplidar_ros/CMakeFiles/rplidarNodeClient.dir/src/client.cpp.o: /opt/ros/kinetic/include/xmlrpcpp/XmlRpcDecl.h
 rplidar_ros/CMakeFiles/rplidarNodeClient.dir/src/client.cpp.o: /opt/ros/kinetic/include/xmlrpcpp/XmlRpcValue.h
 
