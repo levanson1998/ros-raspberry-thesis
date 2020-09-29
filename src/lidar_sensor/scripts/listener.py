@@ -38,17 +38,30 @@
 
 # auth: Le Van Son
 # mail: vanson1243@gmail.com
-# test git
-# test 1
 
 import rospy
-from std_msgs.msg import String
-from sensor_msgs.msg import LaserScan
+import math
+import numpy as np
+from std_msgs.msg import String, Float32MultiArray
+from sensor_msgs.msg import LaserScan, PointCloud2
 
-def callback(data):
-    rospy.loginfo(rospy.get_caller_id() + 'I heard %s', data.data)
+def scanCallback(scan):
+    count = scan.scan_time/scan.time_increment
+    # rospy.loginfo("I heard a laser scan :{}:{}".format(scan.header.frame_id, count))
+    rospy.loginfo("angle_range, {}, {}".format(DEG2RAD(scan.angle_min), DEG2RAD(scan.angle_max)))
+    # rospy.loginfo(scan.ranges)
+    # for i in range(int(count)):
+    #     print(scan.ranges[i])
+    #     degree = RAD2DEG(scan.angle_min+scan.angle_increment*i)
+    #     rospy.loginfo("[ {}: {}]".format(degree, scan.ranges[i]))
 
-def listener(): 
+def DEG2RAD(deg):
+    return deg*math.pi/180
+
+def RAD2DEG(rad):
+    return rad*180/math.pi
+
+def listener():
 
     # In ROS, nodes are uniquely named. If two nodes with the same
     # name are launched, the previous one is kicked off. The
@@ -57,7 +70,7 @@ def listener():
     # run simultaneously.
     rospy.init_node('listener', anonymous=True)
 
-    rospy.Subscriber('chatter', String, callback)
+    rospy.Subscriber('scan', LaserScan, scanCallback, queue_size=1000)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
