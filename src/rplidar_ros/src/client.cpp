@@ -37,21 +37,35 @@
 
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
+<<<<<<< HEAD
 #include "std_msgs/Float32.h"
 #include "std_msgs/MultiArrayDimension.h"
 #include <std_msgs/Float32MultiArray.h>
+=======
+#include "std_msgs/String.h"
+>>>>>>> a845ca4747297c8b8c5274ef09f8427d6d9d6a20
 
 #define RAD2DEG(x) ((x)*180./M_PI)
 
 void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan)
 {
+    ros::NodeHandle n;
+    ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+    std_msgs::String msg;
+    std::stringstream ss;
     int count = scan->scan_time / scan->time_increment;
     ROS_INFO("I heard a laser scan %s[%d]:", scan->header.frame_id.c_str(), count);
     ROS_INFO("angle_range, %f, %f", RAD2DEG(scan->angle_min), RAD2DEG(scan->angle_max));
   
     for(int i = 0; i < count; i++) {
         float degree = RAD2DEG(scan->angle_min + scan->angle_increment * i);
+<<<<<<< HEAD
 
+=======
+        ss << ("[%f, %f]", degree, scan->ranges[i]);
+        msg.data = ss.str();
+        chatter_pub.publish(msg);
+>>>>>>> a845ca4747297c8b8c5274ef09f8427d6d9d6a20
         ROS_INFO(": [%f, %f]", degree, scan->ranges[i]);
     }
 }
@@ -60,8 +74,13 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "rplidar_node_client");
     ros::NodeHandle n;
+<<<<<<< HEAD
+=======
+
+>>>>>>> a845ca4747297c8b8c5274ef09f8427d6d9d6a20
     
     ros::Subscriber sub = n.subscribe<sensor_msgs::LaserScan>("/scan", 1000, scanCallback);
+
 
     ros::spin();
 
