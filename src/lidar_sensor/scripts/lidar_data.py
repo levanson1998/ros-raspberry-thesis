@@ -22,7 +22,11 @@ r = rospy.Rate(5.0)
 
 scan = LaserScan()
 
+<<<<<<< HEAD
 scan.serial_parityy("/dev/ttyUSB0")
+=======
+scan.serial_parity("/dev/ttyUSB0")
+>>>>>>> e7e1f627f2d07a7e467e6cfe3b818e8986d98c7f
 scan.baud_rate(115200)
 
 scan.header.stamp = current_time
