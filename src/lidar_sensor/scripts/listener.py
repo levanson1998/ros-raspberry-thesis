@@ -48,8 +48,11 @@ from sensor_msgs.msg import LaserScan, PointCloud2
 def scanCallback(scan):
     count = scan.scan_time/scan.time_increment
     # rospy.loginfo("I heard a laser scan :{}:{}".format(scan.header.frame_id, count))
+<<<<<<< HEAD
     arr = np.array([1, 2, 3, 4, 5])
     print(arr)
+=======
+>>>>>>> a467cff34159e4401d1d7c4c690b3bcd914df5b0
     rospy.loginfo("angle_range, {}, {}".format(DEG2RAD(scan.angle_min), DEG2RAD(scan.angle_max)))
     # rospy.loginfo(scan.ranges)
     # for i in range(int(count)):
