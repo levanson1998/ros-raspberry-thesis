@@ -22,9 +22,6 @@ r = rospy.Rate(5.0)
 
 scan = LaserScan()
 
-scan.serial_parity("/dev/ttyUSB0")
-scan.baud_rate(115200)
-
 scan.header.stamp = current_time
 scan.header.frame_id = 'laser_frame'
 scan.angle_min = deg2rad(-90)
