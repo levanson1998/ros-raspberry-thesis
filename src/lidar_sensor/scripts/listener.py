@@ -39,7 +39,6 @@
 # auth: Le Van Son
 # mail: vanson1243@gmail.com
 
-
 import rospy
 import math
 import numpy as np
