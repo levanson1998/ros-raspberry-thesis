@@ -43,17 +43,14 @@ import rospy
 import math
 import numpy as np
 from std_msgs.msg import String, Float32MultiArray
-from sensor_msgs.msg import LaserScan, PointCloud2
-
-def scanCallback(scan):
-    count = scan.scan_time/scan.time_increment
-    # rospy.loginfo("I heard a laser scan :{}:{}".format(scan.header.frame_id, count))
-    rospy.loginfo("angle_range, {}, {}".format(DEG2RAD(scan.angle_min), DEG2RAD(scan.angle_max)))
-    # rospy.loginfo(scan.ranges)
-    # for i in range(int(count)):
-    #     print(scan.ranges[i])
-    #     degree = RAD2DEG(scan.angle_min+scan.angle_increment*i)
-    #     rospy.loginfo("[ {}: {}]".format(degree, scan.ranges[i]))
+from sensor_msgs.msg import LaserScan
+import socket
+import sys
+import time
+import serial
+from threading import Thread, Timer
+import os
+import struct
 
 def DEG2RAD(deg):
     return deg*math.pi/180
@@ -61,19 +58,151 @@ def DEG2RAD(deg):
 def RAD2DEG(rad):
     return rad*180/math.pi
 
-def listener():
+#-----------------------TCP/IP---------------------------
+# Client
+def connect():
+    global sock
+    TCP_IP = '192.168.0.105'
+    TCP_PORT = 64405
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print("Connecting to {}:{}".format(TCP_IP, TCP_PORT))
+    try:
+        sock.connect((TCP_IP, TCP_PORT))
+        print("Connect successfull !")
+    except:
+        print("Fail Connected !\n")
+        return False
+    return True
 
-    # In ROS, nodes are uniquely named. If two nodes with the same
-    # name are launched, the previous one is kicked off. The
-    # anonymous=True flag means that rospy will choose a unique
-    # name for our 'listener' node so that multiple listeners can
-    # run simultaneously.
+def sendCommand(cmd):
+    global sock
+    # print("Sending: {}".format(cmd))
+    try:
+        sock.sendall(cmd)
+        print("Send successing\n")
+    except:
+        print("Fail send !\n")
+
+#-----------------------TCP/IP---------------------------
+
+#-----------------------BEGIN SERIAL---------------------------
+def serialInit():
+    global ser
+
+    ser = serial.Serial(
+    port = 'COM8', # /dev/ttyAMA0 /dev/ttyUSB0
+    baudrate = 115200,
+    parity = serial.PARITY_NONE,
+    stopbits = serial.STOPBITS_ONE,
+    bytesize = serial.EIGHTBITS,
+    timeout = 1
+    )
+
+next_call = time.time()
+
+def transmitSerial():
+    global next_call, time_t, ser
+
+    a=12.34
+    isStart = 0
+    SttSpeed = 0
+
+# ---> van toc banh trai, phai (12,34)
+# ---< goc. gia toc tu cam bien mpu6050 ()
+    a1 = int(a)
+    a2 = int(round((a-a1)*10000))
+    
+    dataa1=a1.to_bytes(2, byteorder = "little", signed = True)
+    a1L=dataa1[1]
+    a1H=dataa1[0]
+    dataa2=a2.to_bytes(2, byteorder = "little", signed = True)
+    a2L=dataa2[1]
+    a2H=dataa2[0]
+
+    packet = [a1L, a1H, a2L, a2H, isStart,SttSpeed]
+    # print(packet)
+    print("{} * {} * {} * {} * {}".format(a, a1, a2, isStart,SttSpeed))
+    #print("time: ",time.time())
+    # packet = [chr(dataIsTracking), chr(dataX1), chr(dataX2), chr(dataY1), chr(dataY2)]
+    # print("{} - - {}".format(packet, type(packet)))
+
+    ser.write(packet)
+
+    receiveData = ser.read(3)
+    if(len(receiveData)!= 0):
+        speedCurrent=receiveData[0]+receiveData[1]/100
+        ReStop = receiveData[2]
+    t+=1
+    
+    next_call = next_call + time_t
+    # Timer = threading.Timer
+    Timer( next_call - time.time(), transmitSerial ).start()
+# transmitSerial()
+
+
+#-----------------------END SERIAL---------------------------
+
+#------------------BEGIN CALLBACK DATA LIDAR-------------------
+def scanCallback(scan):
+    count = scan.scan_time/scan.time_increment
+    rospy.loginfo("I heard a laser scan :{}:{}".format(scan.header.frame_id, count))
+    rospy.loginfo("angle_range, {}, {}".format(DEG2RAD(scan.angle_min), DEG2RAD(scan.angle_max)))
+    # print(type(scan.ranges))
+    '''
+    doc du lieu serial, them vao bien data va sendCommand()
+    danh gia toc do doc du lieu cua serial
+
+    serial receive: imu(6), encoderL, encoderR
+    '''
+    data = bytearray()
+    for x in scan.ranges:
+        data.extend(bytearray(struct.pack("f", x)))
+    print("size buffer: {}".format(len(data)))
+    sendCommand(data)
+    '''
+    truyen di du lieu lidar va imu
+    nhan ve toc do v_l, v_r, start, stop,...
+
+    goi serial xuong stm 
+    '''
+
+    # sendCommand("Le Van Son".encode("utf-8"))
+    # sendCommand(scan.ranges.encode("utf-8"))
+    # rospy.loginfo(scan.ranges)
+    # for i in range(int(count)):
+    #     print(scan.ranges[i])
+    #     degree = RAD2DEG(scan.angle_min+scan.angle_increment*i)
+    #     rospy.loginfo("[ {}: {}]".format(degree, scan.ranges[i]))
+
+#------------------END CALLBACK DATA LIDAR-------------------
+
+def main():
+    #-----SERIAL INIT-------
+    # serialInit()   
+    #-----SERIAL INIT-------
+
+    global connect
     rospy.init_node('listener', anonymous=True)
 
+    for i in range(5):
+        if connect(): break
+        time.sleep(2)
+        if i == 4:
+            sys.exit("Fail connect over 5 times !\n")
+    
     rospy.Subscriber('scan', LaserScan, scanCallback, queue_size=1000)
+    # value = (234.456, 1.01, 123.546, 23.86)
+    # data = bytearray()
+
+    # for x in value:
+    #     data.extend(bytearray(struct.pack("f", x)))
+    # while True:
+    #     sendCommand(data)
+    #     time.sleep(1)
+
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
 
 if __name__ == '__main__':
-    listener()
+    main()
