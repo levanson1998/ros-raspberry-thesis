@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Software License Agreement (BSD License)
 #
 # Copyright (c) 2008, Willow Garage, Inc.
@@ -86,23 +86,25 @@ def sendCommand(cmd):
 #-----------------------TCP/IP---------------------------
 
 #-----------------------BEGIN SERIAL---------------------------
+time_t = 0.1
 def serialInit():
     global ser
 
     ser = serial.Serial(
-    port = 'COM8', # /dev/ttyAMA0 /dev/ttyUSB0
+    port = '/dev/ttyAMA0', # /dev/ttyAMA0 /dev/ttyUSB0
     baudrate = 115200,
     parity = serial.PARITY_NONE,
     stopbits = serial.STOPBITS_ONE,
     bytesize = serial.EIGHTBITS,
     timeout = 1
     )
+    print("Connect to stm32f4 succesfull !")
 
 next_call = time.time()
 
 def transmitSerial():
     global next_call, time_t, ser
-
+    '''
     a=12.34
     isStart = 0
     SttSpeed = 0
@@ -121,23 +123,28 @@ def transmitSerial():
 
     packet = [a1L, a1H, a2L, a2H, isStart,SttSpeed]
     # print(packet)
-    print("{} * {} * {} * {} * {}".format(a, a1, a2, isStart,SttSpeed))
+    # print("{} * {} * {} * {} * {}".format(a, a1, a2, isStart,SttSpeed))
     #print("time: ",time.time())
     # packet = [chr(dataIsTracking), chr(dataX1), chr(dataX2), chr(dataY1), chr(dataY2)]
     # print("{} - - {}".format(packet, type(packet)))
 
-    ser.write(packet)
-
-    receiveData = ser.read(3)
-    if(len(receiveData)!= 0):
-        speedCurrent=receiveData[0]+receiveData[1]/100
-        ReStop = receiveData[2]
-    t+=1
+    # ser.write(packet)
+    '''
+    try:
+        receiveData = ser.read(11)
+        print("receive serial: ", receiveData)
+    except:
+        print("serial no data !!!")
+    
+    # if(len(receiveData)!= 0):
+    #     speedCurrent=receiveData[0]+receiveData[1]/100
+    #     ReStop = receiveData[2]
+    # t+=1
     
     next_call = next_call + time_t
     # Timer = threading.Timer
     Timer( next_call - time.time(), transmitSerial ).start()
-# transmitSerial()
+
 
 
 #-----------------------END SERIAL---------------------------
@@ -148,6 +155,20 @@ def scanCallback(scan):
     rospy.loginfo("I heard a laser scan :{}:{}".format(scan.header.frame_id, count))
     rospy.loginfo("angle_range, {}, {}".format(DEG2RAD(scan.angle_min), DEG2RAD(scan.angle_max)))
     # print(type(scan.ranges))
+
+    # try:
+    receiveData = ser.read(11)
+    stm = []
+    stm.append(int.from_bytes(receiveData[0:2], "big"))
+    stm.append(int.from_bytes(receiveData[2:4], "big"))
+    stm.append(int.from_bytes(receiveData[4:7], "big"))
+    stm.append(int.from_bytes(receiveData[7:10], "big", signed=True))
+    # stm.append(data[360*4+10])
+    print(stm)
+
+    print("receive serial: ", receiveData)
+    # except:
+    #     print("serial no data !!!")
     '''
     doc du lieu serial, them vao bien data va sendCommand()
     danh gia toc do doc du lieu cua serial
@@ -157,6 +178,7 @@ def scanCallback(scan):
     data = bytearray()
     for x in scan.ranges:
         data.extend(bytearray(struct.pack("f", x)))
+    data.extend(receiveData)
     print("size buffer: {}".format(len(data)))
     sendCommand(data)
     '''
@@ -178,12 +200,14 @@ def scanCallback(scan):
 
 def main():
     #-----SERIAL INIT-------
-    # serialInit()   
+    serialInit()   
+    # transmitSerial()
     #-----SERIAL INIT-------
 
     global connect
     rospy.init_node('listener', anonymous=True)
-
+    # print(sys.path)
+    print(int.from_bytes(b'0x23', "big"))
     for i in range(5):
         if connect(): break
         time.sleep(2)
