@@ -51,6 +51,7 @@ import serial
 from threading import Thread, Timer
 import os
 import struct
+import io
 
 def DEG2RAD(deg):
     return deg*math.pi/180
@@ -79,7 +80,7 @@ def sendCommand(cmd):
     # print("Sending: {}".format(cmd))
     try:
         sock.sendall(cmd)
-        print("Send successing\n")
+        # print("Send successing\n")
     except:
         print("Fail send !\n")
 
@@ -88,7 +89,7 @@ def sendCommand(cmd):
 #-----------------------BEGIN SERIAL---------------------------
 time_t = 0.1
 def serialInit():
-    global ser
+    global ser, sio
 
     ser = serial.Serial(
     port = '/dev/ttyAMA0', # /dev/ttyAMA0 /dev/ttyUSB0
@@ -98,7 +99,8 @@ def serialInit():
     bytesize = serial.EIGHTBITS,
     timeout = 1
     )
-    print("Connect to stm32f4 succesfull !")
+    # sio=io.TextIOWrapper(io.BufferedRWPair(ser, ser), encoding="utf-16", errors='ignore')
+    # sio.flush()
 
 next_call = time.time()
 
@@ -148,27 +150,23 @@ def transmitSerial():
 
 
 #-----------------------END SERIAL---------------------------
-
+t2=0
 #------------------BEGIN CALLBACK DATA LIDAR-------------------
 def scanCallback(scan):
+    global t2
     count = scan.scan_time/scan.time_increment
-    rospy.loginfo("I heard a laser scan :{}:{}".format(scan.header.frame_id, count))
-    rospy.loginfo("angle_range, {}, {}".format(DEG2RAD(scan.angle_min), DEG2RAD(scan.angle_max)))
-    # print(type(scan.ranges))
+    t1=time.time()
+    print("time callback: ", t1-t2)
+    t2=time.time()
 
-    # try:
-    receiveData = ser.read(11)
-    stm = []
-    stm.append(int.from_bytes(receiveData[0:2], "big"))
-    stm.append(int.from_bytes(receiveData[2:4], "big"))
-    stm.append(int.from_bytes(receiveData[4:7], "big"))
-    stm.append(int.from_bytes(receiveData[7:10], "big", signed=True))
-    # stm.append(data[360*4+10])
-    print(stm)
+    ser.flushInput()
+    if ser.inWaiting()>1:
+        print("CAUTION BUFFER SERIAL ", ser.inWaiting())
+    receiveData = ser.readline()
+    # print("receiveData: ", receiveData)
+    
+    # print("in waiting: ", ser.inWaiting())
 
-    print("receive serial: ", receiveData)
-    # except:
-    #     print("serial no data !!!")
     '''
     doc du lieu serial, them vao bien data va sendCommand()
     danh gia toc do doc du lieu cua serial
@@ -179,7 +177,7 @@ def scanCallback(scan):
     for x in scan.ranges:
         data.extend(bytearray(struct.pack("f", x)))
     data.extend(receiveData)
-    print("size buffer: {}".format(len(data)))
+    # print("size buffer: {}".format(len(data)))
     sendCommand(data)
     '''
     truyen di du lieu lidar va imu
@@ -188,13 +186,6 @@ def scanCallback(scan):
     goi serial xuong stm 
     '''
 
-    # sendCommand("Le Van Son".encode("utf-8"))
-    # sendCommand(scan.ranges.encode("utf-8"))
-    # rospy.loginfo(scan.ranges)
-    # for i in range(int(count)):
-    #     print(scan.ranges[i])
-    #     degree = RAD2DEG(scan.angle_min+scan.angle_increment*i)
-    #     rospy.loginfo("[ {}: {}]".format(degree, scan.ranges[i]))
 
 #------------------END CALLBACK DATA LIDAR-------------------
 
